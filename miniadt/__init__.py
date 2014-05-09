@@ -1,21 +1,4 @@
 # -*- coding:utf-8 -*-
-"""
-## define mini adt
-Result = ADTTypeProvider("Result")
-Failure = Result("Failure", "code message")
-Success = Result("Success", "value")
-
-@Result.match
-class match0(object):
-    @Result.dispatchmethod
-    def Failure(code, message):
-        return ["oops", code, message]
-
-    @Result.dispatchmethod
-    def Success(value):
-        return ["ok", value]
-"""
-
 from collections import namedtuple
 from .langhelpers import ClassStoreDecoratorFactory
 import inspect
@@ -52,13 +35,13 @@ class ADTTypeProvider(object):
     def validation(self, cls):
         candidates = list(dispatchmethod.get_candidates(cls))
         if not self.is_comprehensive(candidates):
-            raise NotComprehensive("{} != {}".format(candidates, list(self.members.keys())))
+            raise NotComprehensive("expected={} != actual={}".format(list(self.members.keys()), candidates))
 
         for name, type_constructor in self.members.items():
             template_argspec = inspect.getargspec(type_constructor.__new__)
             fn_argspec = inspect.getargspec(getattr(cls, name))
             if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args):
-                raise NotComprehensive("on {tag}.{name}:  {template} != {fn}".format(
+                raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
                     tag=self.tag, 
                     name=name, 
                     template=template_argspec.args[1:],
