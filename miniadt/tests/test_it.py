@@ -48,7 +48,7 @@ class VariantTest(unittest.TestCase):
         Another("Item", "name value")
 
         with self.assertRaisesRegexp(NotComprehensive, "Item"):
-            Another.validation(target)
+            Another.match(target)
 
     def test_validation__failure2(self):
         from miniadt import dispatchmethod, NotComprehensive

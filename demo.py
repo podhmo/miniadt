@@ -48,7 +48,7 @@ Node(e=10, children=[Leaf(e=20)])
 >>> TreeType.match(invalid_dispatch)
 Traceback (most recent call last):
  ...
-miniadt.NotComprehensive: expected=['Node', 'Leaf'] != actual=['Node']
+miniadt.NotComprehensive: expected=['Leaf', 'Node'] != actual=['Node']
 
 
 ### 2. dispatch function's arguments are invalid.
