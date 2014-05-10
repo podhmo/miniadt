@@ -23,14 +23,29 @@ class MethodControl(object):
     def __init__(self, provider):
         self.provider = provider
 
-    def dispatch(self, cls, target):
+    def dispatch(self, cls, target, *args, **kwargs):
+        instance = object.__new__(cls)
+        instance.__init__(*args, **kwargs)
         tag = target.__class__.__name__
-        return getattr(cls, tag)(*target)
+        return getattr(instance, tag)(*target)
 
     def generate(self, cls):
         cls.__new__ = self.dispatch
         self.provider.validation_members(cls)
         return self.validation(cls)
+
+    def validation(self, cls):
+        provider = self.provider
+        for name, type_constructor in provider.members.items():
+            template_argspec = inspect.getargspec(type_constructor.__new__)
+            fn_argspec = inspect.getargspec(getattr(cls, name))
+            if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args[1:]):
+                raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
+                    tag=provider.tag, 
+                    name=name, 
+                    template=template_argspec.args[1:],
+                    fn=fn_argspec.args))
+        return cls
 
 class FunctionControl(object):
     def __init__(self, provider):
