@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
-from collections import namedtuple
 from .langhelpers import ClassStoreDecoratorFactory
+from .adttype import adttype
 import inspect
 
 
@@ -29,7 +29,7 @@ class MethodControl(object):
         instance = object.__new__(cls)
         instance.__init__(*args, **kwargs)
         tag = target.__class__.__name__
-        return getattr(instance, tag)(*target)
+        return getattr(instance, tag)(*target._as_list())
 
     def generate(self, cls):
         cls.__new__ = self.dispatch
@@ -56,7 +56,7 @@ class FunctionControl(object):
 
     def dispatch(self, cls, target):
         tag = target.__class__.__name__
-        return getattr(cls, tag)(*target)
+        return getattr(cls, tag)(*target._as_list())
 
     def generate(self, cls):
         cls.__new__ = self.dispatch
@@ -66,7 +66,7 @@ class FunctionControl(object):
     def validation(self, cls):
         provider = self.provider
         for name, type_constructor in provider.members.items():
-            template_argspec = inspect.getargspec(type_constructor.__new__)
+            template_argspec = inspect.getargspec(type_constructor.__init__)
             fn_argspec = inspect.getargspec(getattr(cls, name))
             if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
@@ -85,7 +85,7 @@ class ADTTypeProvider(object):
         self.method_control = MethodControl(self)
 
     def __call__(self, name, fields):
-        return self.as_member(namedtuple(name, fields))
+        return self.as_member(adttype(name, fields))
 
     def as_member(self, cls):
         name = cls.__name__
@@ -100,8 +100,8 @@ class ADTTypeProvider(object):
         if not self.is_comprehensive(candidates):
             raise NotComprehensive("expected={} != actual={}".format(list(self.members.keys()), candidates))
 
-    def match(self, cls):  ##side effect!!
+    def match(self, cls):  # side effect!!
         return self.function_control.generate(cls)
 
-    def match_method(self, cls):  ##side effect!!
+    def match_method(self, cls):  # side effect!!
         return self.method_control.generate(cls)

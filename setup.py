@@ -14,7 +14,7 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'setuptools',
+    'prestring',
     ]
 
 docs_extras = [

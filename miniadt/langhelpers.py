@@ -1,5 +1,21 @@
 # -*- coding:utf-8 -*-
 import sys
+from prestring.python import PythonModule
+import logging
+logger = logging.getLogger(__name__)
+
+
+def as_python_code(fn):
+    def wrapper(name, *args, **kwargs):
+        m = PythonModule()
+        fn(m, name, *args, **kwargs)
+        code = str(m)
+        logger.debug("-- as_python_code --\n%s", code)
+        # activate python code
+        env = {}
+        exec(code, globals(), env)
+        return env[name]
+    return wrapper
 
 
 class ClassStoreDecoratorFactory(object):
