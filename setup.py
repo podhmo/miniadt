@@ -27,13 +27,13 @@ testing_extras = tests_require + [
     ]
 
 setup(name='miniadt',
-      version='0.2.1',
+      version='0.3.0',
       description='tiny abstract data type on python',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: Implementation :: CPython",
-        ],
+      ],
       keywords='',
       author="",
       author_email="",
