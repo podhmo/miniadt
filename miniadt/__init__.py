@@ -3,21 +3,23 @@ from collections import namedtuple
 from .langhelpers import ClassStoreDecoratorFactory
 import inspect
 
+
 class NotComprehensive(Exception):
     pass
 
 dispatchfunction = ClassStoreDecoratorFactory(
-    cache_name="_dispatch_method_name_list", 
+    cache_name="_dispatch_method_name_list",
     cache_factory=set,
-    cache_convert=lambda x : x.__name__,
+    cache_convert=lambda x: x.__name__,
     value_convert=staticmethod
 )
 dispatchmethod = ClassStoreDecoratorFactory(
-    cache_name="_dispatch_method_name_list", 
+    cache_name="_dispatch_method_name_list",
     cache_factory=set,
-    cache_convert=lambda x : x.__name__,
+    cache_convert=lambda x: x.__name__,
     value_convert=lambda x: x
 )
+
 
 class MethodControl(object):
     def __init__(self, provider):
@@ -41,11 +43,12 @@ class MethodControl(object):
             fn_argspec = inspect.getargspec(getattr(cls, name))
             if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args[1:]):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
-                    tag=provider.tag, 
-                    name=name, 
+                    tag=provider.tag,
+                    name=name,
                     template=template_argspec.args[1:],
                     fn=fn_argspec.args))
         return cls
+
 
 class FunctionControl(object):
     def __init__(self, provider):
@@ -67,11 +70,12 @@ class FunctionControl(object):
             fn_argspec = inspect.getargspec(getattr(cls, name))
             if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
-                    tag=provider.tag, 
-                    name=name, 
+                    tag=provider.tag,
+                    name=name,
                     template=template_argspec.args[1:],
                     fn=fn_argspec.args))
         return cls
+
 
 class ADTTypeProvider(object):
     def __init__(self, tag):
@@ -89,8 +93,7 @@ class ADTTypeProvider(object):
         return cls
 
     def is_comprehensive(self, candidates):
-       return (all(m in candidates for m in self.members.keys())
-               and len(candidates) == len(self.members))
+       return (all(m in candidates for m in self.members.keys()) and len(candidates) == len(self.members))
 
     def validation_members(self, cls):
         candidates = list(dispatchmethod.get_candidates(cls))

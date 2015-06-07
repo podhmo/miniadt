@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import unittest
 
+
 class VariantTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -11,6 +12,7 @@ class VariantTest(unittest.TestCase):
 
     def _getTarget(self):
         from miniadt import dispatchfunction
+
         @self.Result.match
         class Match0(object):
             @dispatchfunction
@@ -21,7 +23,6 @@ class VariantTest(unittest.TestCase):
             def Success(value):
                 return ["ok", value]
         return Match0
-
 
     def test_comprehesive(self):
         self.assertTrue(self.Result.is_comprehensive(["Failure", "Success"]))
@@ -59,7 +60,7 @@ class VariantTest(unittest.TestCase):
                 return ["oops", code, message]
 
             @dispatchfunction
-            def Success(code, message): #xxx: arguments are wrong
+            def Success(code, message):  # xxx: arguments are wrong
                 return ["ok", code, message]
 
         with self.assertRaisesRegexp(NotComprehensive, "'code', 'message'"):
