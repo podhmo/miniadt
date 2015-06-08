@@ -68,17 +68,11 @@ class ADTTypeProvider(object):
                     template=template_argspec.args[1:],
                     fn=fn_argspec.args))
 
-        def dispatch(cls, target, *args, **kwargs):
-            instance = object.__new__(cls)
-            instance.__init__(*args, **kwargs)
-            return _dispatch(instance, target)
-
-        def _dispatch(instance, target):
+        def dispatch(self, target):
             tag = target.__class__.__name__
-            return getattr(instance, tag)(*target._as_list())
+            return getattr(self, tag)(*target._as_list())
 
-        cls.__new__ = staticmethod(dispatch)
-        cls.__call__ = staticmethod(_dispatch)
+        cls.__call__ = dispatch
         return cls
 
     def classify(self, cls):  # side effect!!

@@ -30,10 +30,10 @@ class Applicator(object):
         return self.name
 
     def Node(self, e, children):
-        return [self.name, [self(self, x) for x in children]]
+        return [self.name, [self(x) for x in children]]
 
-print(Applicator(Leaf(e=10), "foo"))  # => foo
-print(Applicator(Node(e=10, children=[Leaf(e=20)]), "foo"))  # => ['foo', ['foo']]
+print(Applicator("foo")(Leaf(e=10)))  # => foo
+print(Applicator("foo")(Node(e=10, children=[Leaf(e=20)])))  # => ['foo', ['foo']]
 
 
 @Tree.classify
