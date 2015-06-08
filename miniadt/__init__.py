@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
-from .langhelpers import ClassStoreDecoratorFactory
-from .adttype import adttype
+import abc
 import inspect
+from .langhelpers import ClassStoreDecoratorFactory, reify
+from .adttype import adttype, ADTType
 
 
 class NotComprehensive(Exception):
@@ -84,12 +85,17 @@ class ADTTypeProvider(object):
         self.function_control = FunctionControl(self)
         self.method_control = MethodControl(self)
 
+    @reify
+    def base(self):
+        return abc.ABCMeta(self.tag, (ADTType, ), {})
+
     def __call__(self, name, fields):
         return self.as_member(adttype(name, fields))
 
     def as_member(self, cls):
         name = cls.__name__
         self.members[name] = cls
+        self.base.register(cls)
         return cls
 
     def is_comprehensive(self, candidates):

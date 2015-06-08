@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
+import abc
 from .langhelpers import as_python_code
 
 
-class ADTType(object):
-    pass
+ADTType = abc.ABCMeta("ADTType", (), {})
 
 
 @as_python_code
