@@ -115,3 +115,14 @@ class ADTTypeProvider(object):
 
     def match_instance(self, cls):  # side effect!!
         return self.method_control.generate(cls)
+
+    def classify(self, cls):
+        for m in self.members.keys():
+            if not hasattr(cls, m):
+                raise NotComprehensive("{} is not found. expected={}".format(m, list(self.members.keys())))
+
+        def dispatch(self, ob, *args, **kwargs):
+            tag = ob.__class__.__name__
+            return getattr(self, tag)(ob, *args, **kwargs)
+        cls.__call__ = dispatch
+        return cls
