@@ -11,15 +11,15 @@ class VariantTest(unittest.TestCase):
         cls.Success = cls.Result("Success", "value")
 
     def _getTarget(self):
-        from miniadt import dispatchfunction
+        from miniadt import dispatch
 
         @self.Result.match
         class Match0(object):
-            @dispatchfunction
+            @dispatch
             def Failure(code, message):
                 return ["oops", code, message]
 
-            @dispatchfunction
+            @dispatch
             def Success(value):
                 return ["ok", value]
         return Match0
@@ -52,14 +52,14 @@ class VariantTest(unittest.TestCase):
             Another.match(target)
 
     def test_validation__failure2(self):
-        from miniadt import dispatchfunction, NotComprehensive
+        from miniadt import dispatch, NotComprehensive
 
         class Match0(object):
-            @dispatchfunction
+            @dispatch
             def Failure(code, message):
                 return ["oops", code, message]
 
-            @dispatchfunction
+            @dispatch
             def Success(code, message):  # xxx: arguments are wrong
                 return ["ok", code, message]
 

@@ -26,11 +26,11 @@ how to use
 
     >>> @TreeType.match
     ... class depth(object):
-    ...     @dispatchmethod
+    ...     @dispatch
     ...     def Node(e, children):
     ...         return max(depth(e)for e in children) + 1
     ...
-    ...     @dispatchmethod
+    ...     @dispatch
     ...     def Leaf(e):
     ...         return 1
 
@@ -48,7 +48,7 @@ miniadt has comprehensive check function.
 
     ### 1. lack of dispatch candidates
     >>> class invalid_dispatch(object):
-    ...     @dispatchmethod
+    ...     @dispatch
     ...     def Node(e, children):
     ...         return "foo"
 
@@ -60,10 +60,10 @@ miniadt has comprehensive check function.
 
     ### 2. dispatch function's arguments are invalid.
     >>> class invalid_dispatch2(object):
-    ...     @dispatchmethod
+    ...     @dispatch
     ...     def Node(e):  ## correct argsspec is "e, children"
     ...         return "foo"
-    ...     @dispatchmethod
+    ...     @dispatch
     ...     def Leaf(e):
     ...         return "foo"
 

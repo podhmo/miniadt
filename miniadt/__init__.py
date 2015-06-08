@@ -8,7 +8,7 @@ from .adttype import adttype, ADTType
 class NotComprehensive(Exception):
     pass
 
-dispatchfunction = ClassStoreDecoratorFactory(
+dispatch = ClassStoreDecoratorFactory(
     cache_name="_dispatch_method_name_list",
     cache_factory=set,
     cache_convert=lambda x: x.__name__,
@@ -29,18 +29,22 @@ class MethodControl(object):
     def dispatch(self, cls, target, *args, **kwargs):
         instance = object.__new__(cls)
         instance.__init__(*args, **kwargs)
+        return self._dispatch(instance, target)
+
+    def _dispatch(self, instance, target):
         tag = target.__class__.__name__
         return getattr(instance, tag)(*target._as_list())
 
     def generate(self, cls):
         cls.__new__ = self.dispatch
+        cls.__call__ = self._dispatch
         self.provider.validation_members(cls)
         return self.validation(cls)
 
     def validation(self, cls):
         provider = self.provider
         for name, type_constructor in provider.members.items():
-            template_argspec = inspect.getargspec(type_constructor.__new__)
+            template_argspec = inspect.getargspec(type_constructor.__init__)
             fn_argspec = inspect.getargspec(getattr(cls, name))
             if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args[1:]):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
@@ -109,5 +113,5 @@ class ADTTypeProvider(object):
     def match(self, cls):  # side effect!!
         return self.function_control.generate(cls)
 
-    def match_method(self, cls):  # side effect!!
+    def match_instance(self, cls):  # side effect!!
         return self.method_control.generate(cls)
