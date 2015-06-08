@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from miniadt import ADTTypeProvider, dispatch, dispatchmethod
+from miniadt import ADTTypeProvider
 Tree = ADTTypeProvider("Tree")
 Node = Tree("Node", "e children")
 Leaf = Tree("Leaf", "e")
@@ -10,11 +10,9 @@ print(Node(e=10, children=[Leaf(e=20)]))  # => Node(e=10, children=[Leaf(e=20)])
 
 @Tree.match
 class depth(object):
-    @dispatch
     def Leaf(e):
         return 1
 
-    @dispatch
     def Node(e, children):
         return max(depth(e) for e in children) + 1
 
@@ -28,11 +26,9 @@ class Applicator(object):
     def __init__(self, name):
         self.name = name
 
-    @dispatchmethod
     def Leaf(self, e):
         return self.name
 
-    @dispatchmethod
     def Node(self, e, children):
         return [self.name, [self(self, x) for x in children]]
 
