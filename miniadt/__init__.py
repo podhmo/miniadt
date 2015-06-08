@@ -66,7 +66,7 @@ class ADTTypeProvider(object):
                     tag=self.tag,
                     name=name,
                     template=template_argspec.args[1:],
-                    fn=fn_argspec.args))
+                    fn=fn_argspec.args[1:]))
 
         def dispatch(self, target):
             tag = target.__class__.__name__
