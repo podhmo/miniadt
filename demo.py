@@ -3,7 +3,7 @@ this is demo
 
 ## create Type
 
->>> from miniadt import ADTTypeProvider, dispatchmethod
+>>> from miniadt import ADTTypeProvider
 >>> TreeType = ADTTypeProvider("Tree")
 
 >>> Node = TreeType("Node", "e children")
@@ -22,11 +22,9 @@ Node(e=10, children=[Leaf(e=20)])
 
 >>> @TreeType.match
 ... class depth(object):
-...     @dispatchmethod
 ...     def Node(e, children):
 ...         return max(depth(e)for e in children) + 1
 ...
-...     @dispatchmethod
 ...     def Leaf(e):
 ...         return 1
 
@@ -39,24 +37,21 @@ Node(e=10, children=[Leaf(e=20)])
 
 ## not comprehensive definition on pattern matching function error is occur 
 
-### 1. lack of dispatch candidates
+### 1. lack of dispatch andidates
 >>> class invalid_dispatch(object):
-...     @dispatchmethod
 ...     def Node(e, children):
 ...         return "foo"
 
 >>> TreeType.match(invalid_dispatch)
 Traceback (most recent call last):
  ...
-miniadt.NotComprehensive: expected=['Leaf', 'Node'] != actual=['Node']
+miniadt.NotComprehensive: Leaf is not found. expected=['Node', 'Leaf']
 
 
 ### 2. dispatch function's arguments are invalid.
 >>> class invalid_dispatch2(object):
-...     @dispatchmethod
 ...     def Node(e):  ## correct argsspec is "e, children"
 ...         return "foo"
-...     @dispatchmethod
 ...     def Leaf(e):
 ...         return "foo"
 

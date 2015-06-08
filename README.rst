@@ -7,7 +7,7 @@ how to use
 
     ## create Type
 
-    >>> from miniadt import ADTTypeProvider, dispatchmethod
+    >>> from miniadt import ADTTypeProvider
     >>> TreeType = ADTTypeProvider("Tree")
 
     >>> Node = TreeType("Node", "e children")
@@ -26,11 +26,9 @@ how to use
 
     >>> @TreeType.match
     ... class depth(object):
-    ...     @dispatch
     ...     def Node(e, children):
     ...         return max(depth(e)for e in children) + 1
     ...
-    ...     @dispatch
     ...     def Leaf(e):
     ...         return 1
 
@@ -44,31 +42,28 @@ miniadt has comprehensive check function.
 
 .. code:: 
 
-    ## not comprehensive definition on pattern matching function error is occur 
+  ## not comprehensive definition on pattern matching function error is occur 
 
-    ### 1. lack of dispatch candidates
-    >>> class invalid_dispatch(object):
-    ...     @dispatch
-    ...     def Node(e, children):
-    ...         return "foo"
+  ### 1. lack of dispatch andidates
+  >>> class invalid_dispatch(object):
+  ...     def Node(e, children):
+  ...         return "foo"
 
-    >>> TreeType.match(invalid_dispatch)
-    Traceback (most recent call last):
-     ...
-    miniadt.NotComprehensive: expected=['Node', 'Leaf'] != actual=['Node']
+  >>> TreeType.match(invalid_dispatch)
+  Traceback (most recent call last):
+   ...
+  miniadt.NotComprehensive: Leaf is not found. expected=['Node', 'Leaf']
 
 
-    ### 2. dispatch function's arguments are invalid.
-    >>> class invalid_dispatch2(object):
-    ...     @dispatch
-    ...     def Node(e):  ## correct argsspec is "e, children"
-    ...         return "foo"
-    ...     @dispatch
-    ...     def Leaf(e):
-    ...         return "foo"
+  ### 2. dispatch function's arguments are invalid.
+  >>> class invalid_dispatch2(object):
+  ...     def Node(e):  ## correct argsspec is "e, children"
+  ...         return "foo"
+  ...     def Leaf(e):
+  ...         return "foo"
 
-    >>> TreeType.match(invalid_dispatch2)
-    Traceback (most recent call last):
-     ...
-    miniadt.NotComprehensive: on Tree.Node:  expected=['e', 'children'] != actual=['e']
+  >>> TreeType.match(invalid_dispatch2)
+  Traceback (most recent call last):
+   ...
+  miniadt.NotComprehensive: on Tree.Node:  expected=['e', 'children'] != actual=['e']
 
