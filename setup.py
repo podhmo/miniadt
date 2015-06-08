@@ -28,7 +28,7 @@ testing_extras = tests_require + [
     ]
 
 setup(name='miniadt',
-      version='0.3.0',
+      version='0.4.0',
       description='tiny abstract data type on python',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
