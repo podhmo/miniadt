@@ -59,3 +59,22 @@ class VariantTest(unittest.TestCase):
 
         with self.assertRaisesRegexp(NotComprehensive, "'code', 'message'"):
             self.Result.match(Match0)
+
+
+class LooseVariantTest(unittest.TestCase):
+    def test_it(self):
+        from miniadt import ADTTypeProvider
+        Result = ADTTypeProvider("Result")
+        Failure = Result("Failure", "code message")
+        Success = Result("Success", "value")
+
+        @Result.match
+        class O(object):
+            def Success(_):
+                return "ok"
+
+            def Failure(_, message):
+                return message
+
+        self.assertEqual(O(Success("yup")), "ok")
+        self.assertEqual(O(Failure(code="404", message="notfound")), "notfound")

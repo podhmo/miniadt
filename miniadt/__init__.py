@@ -35,13 +35,24 @@ class ADTTypeProvider(object):
             if not hasattr(cls, m):
                 raise NotComprehensive("{} is not found. expected={}".format(m, list(self.members.keys())))
 
+    def is_loose_equal(self, xs, ys):
+        if len(xs) != len(ys):
+            return False
+
+        for x, y in zip(xs, ys):
+            if y.replace("_", "") == "":
+                continue
+            if x != y:
+                return False
+        return True
+
     def match(self, cls):  # side effect!!
         self._validation_members(cls)
 
         for name, type_constructor in self.members.items():
             template_argspec = inspect.getargspec(type_constructor.__init__)
             fn_argspec = inspect.getargspec(getattr(cls, name))
-            if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args):
+            if not self.is_loose_equal(template_argspec.args[1:], fn_argspec.args):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
                     tag=self.tag,
                     name=name,
@@ -61,7 +72,7 @@ class ADTTypeProvider(object):
         for name, type_constructor in self.members.items():
             template_argspec = inspect.getargspec(type_constructor.__init__)
             fn_argspec = inspect.getargspec(getattr(cls, name))
-            if tuple(template_argspec.args[1:]) != tuple(fn_argspec.args[1:]):
+            if not self.is_loose_equal(template_argspec.args[1:], fn_argspec.args[1:]):
                 raise NotComprehensive("on {tag}.{name}:  expected={template} != actual={fn}".format(
                     tag=self.tag,
                     name=name,
